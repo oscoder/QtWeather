@@ -86,6 +86,12 @@ Rectangle {
 
     SplashScreen {
         id: splash
+        x: 0
+        y: 0
+        anchors.rightMargin: 0
+        anchors.bottomMargin: 0
+        anchors.leftMargin: 0
+        anchors.topMargin: 0
         anchors.fill: parent
         visible: true
     }
