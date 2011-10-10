@@ -40,79 +40,71 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
+import "elements"
+import "../"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+ForecastView {
+    id: root
+    isClear: false
 
-    property string folder: "images/s60/"
-
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
-
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
+    SmallCloud {
+        id: cloud2
+        x: scaledX(341)
+        y: scaledY(-800)
+        finalY: scaledY(-469);
+        type: "cloud_rain"
     }
 
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
+    HungItem {
+        id: sun
+        x: isDay ? scaledX(198) : scaledX(220)
+        y: scaledY(-800)
+        itemX: 0
+        itemY:  isDay ? 176 : 180
+        height:  isDay ? 460 : 440
+        finalY: isDay ? scaledY(-255) : scaledY(-205)
+        itemImage: isDay ? folder + "cold_sun.png" : folder + "moon.png"
+        lineImage: isDay ? folder + "cold_sun_line.png" : folder + "moon_line.png"
     }
 
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
+    MediumCloud {
+        id: cloud1
+        x: scaledX(6)
+        y: scaledY(-800)
+        finalY: scaledY(-296)
+        type: "cloud_rain"
     }
 
     Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
+        id: haze
+        x: scaledX(-30)
+        source: "../" + folder + "haze.png"
     }
 
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
+    states : State {
+        name: "final"
+        PropertyChanges { target: sun; y: sun.finalY; }
+        PropertyChanges { target: cloud1; y: cloud1.finalY; }
+        PropertyChanges { target: cloud2; y: cloud2.finalY; }
     }
 
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
+    transitions: Transition {
+        SequentialAnimation {
+            ParallelAnimation {
+               NumberAnimation { target: cloud1; properties: "y";
+                                 easing.type: "OutBack"; duration: 500 }
 
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
+               SequentialAnimation {
+                   PauseAnimation { duration: 200 }
+                   NumberAnimation { target: cloud2; properties: "y";
+                                     easing.type: "OutBack"; duration: 500 }
+               }
+            }
 
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
+            NumberAnimation { target: sun; properties: "y";
+                              easing.type: "OutBack"; duration: 500 }
         }
     }
+
+    onPresent: { root.state = "final"; }
 }

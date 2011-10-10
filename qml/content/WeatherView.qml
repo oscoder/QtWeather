@@ -40,79 +40,62 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Item {
+    id: root
 
-    property string folder: "images/s60/"
+    Component {
+        id: cityDelegate
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
+        Item {
+            id: itemInner
+            width: 572 * scaleFactorX
+            height: parent.height
 
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
+            signal present();
 
-    CityModel {
-        id: cityModel
-    }
+            Component.onCompleted: {
+                var component = Qt.createComponent("forecasts/" + model.weather + ".qml");
+                var element = component.createObject(itemInner);
 
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
-    }
-
-    Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
+                if (element != undefined) {
+                    element.cityName = model.cityName;
+                    element.isDay = !model.isNight;
+                    element.lowTemperature = model.lower;
+                    element.highTemperature = model.upper;
+                    element.currentTemperature = model.current;
+                }
+            }
         }
+    }
+
+    ListView {
+        id: list
+        property bool moving: false
+
+        anchors.fill: parent
+        orientation: "Horizontal"
+        //currentIndex: window.currentIndex
+
+        onCurrentIndexChanged: {
+            if (!moving && list.currentItem)
+                list.currentItem.present();
+        }
+
+        onMovementStarted: {
+            moving = true;
+        }
+
+        onMovementEnded: {
+            moving = false;
+            list.currentItem.present();
+        }
+
+        model: cityModel
+        //cacheBuffer: 1000
+        delegate: cityDelegate
+
+        snapMode: ListView.SnapOneItem
+        highlightRangeMode: "StrictlyEnforceRange"
     }
 }

@@ -40,79 +40,82 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Item {
+    id: root
 
-    property string folder: "images/s60/"
+    property string lowTemperature
+    property string highTemperature
+    property string currentTemperature
+    property string folder: "../../" + window.folder
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
+    Row {
+        anchors.bottomMargin: 58
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: line.horizontalCenter
 
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
+        Text {
+            id: temperatureText
+            text: currentTemperature
+            font.family: "Nokia Sans"
+            font.pixelSize: 170 * scaleFactorX
+            font.bold: true
+            color: "white"
+        }
 
-    CityModel {
-        id: cityModel
-    }
-
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
+        Image {
+            source: folder + "centigrades.png"
+            anchors.bottom: temperatureText.bottom
+            anchors.bottomMargin: 34 * scaleFactorX
+        }
     }
 
     Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
+        id: line
+        source: folder + "division_line.png"
+        anchors.top: parent.top
+        anchors.topMargin: 104
+        anchors.left: parent.left
+        anchors.leftMargin: 50 * scaleFactorX
     }
 
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
+    Row {
+        anchors.left: line.left
+        anchors.top: line.bottom
+
+        Image {
+            source: folder + "icon_max.png"
+            anchors.bottom: highTempText.bottom
+            anchors.bottomMargin: 10 * scaleFactorX
+        }
+
+        Text {
+            id: highTempText
+            text: highTemperature + "°C"
+            font.family: "Nokia Sans"
+            font.pixelSize: 40 * scaleFactorX
+            color: "white"
+            opacity: 0.7
+        }
     }
 
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
+    Row {
+        anchors.right: line.right
+        anchors.top: line.bottom
 
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
+        Image {
+            source: folder + "icon_min.png"
+            anchors.bottom: lowTempText.bottom
+            anchors.bottomMargin: 10 * scaleFactorX
+        }
 
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
+        Text {
+            id: lowTempText
+            text: lowTemperature + "°C"
+            font.family: "Nokia Sans"
+            font.pixelSize: 40 * scaleFactorX
+            color: "white"
+            opacity: 0.7
         }
     }
 }

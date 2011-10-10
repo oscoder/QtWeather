@@ -1,5 +1,5 @@
 # Add more folders to ship with the application, here
-folder_01.source = qml/QtWeather
+folder_01.source += qml/QtWeather
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
 
@@ -43,4 +43,5 @@ OTHER_FILES += \
     qtc_packaging/debian_fremantle/control \
     qtc_packaging/debian_fremantle/compat \
     qtc_packaging/debian_fremantle/changelog
+
 

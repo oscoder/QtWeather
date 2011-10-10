@@ -40,79 +40,35 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
+import "elements"
+import "../"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+ForecastView {
+    id: root
 
-    property string folder: "images/s60/"
-
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
-
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
+    HungItem {
+        id: sun
+        x: isDay ? scaledX(120) : scaledX(220)
+        y: scaledY(-800)
+        itemX: 0
+        itemY:  isDay ? 200 : 180
+        height:  isDay ? 500 : 440
+        finalY: isDay ? scaledY(-198) : scaledY(-205)
+        itemImage: isDay ? folder + "sun.png" : folder + "moon.png"
+        lineImage: isDay ? folder + "sun_line.png" : folder + "moon_line.png"
     }
 
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
+    states : State {
+        name: "final"
+        PropertyChanges { target: sun; y: sun.finalY; }
     }
 
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
-    }
-
-    Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
+    transitions : Transition {
+        SequentialAnimation {
+            NumberAnimation { target: sun; properties: "y";
+                              easing.type: "OutBack"; duration: 500 }
         }
     }
+
+    onPresent: root.state = "final"
 }

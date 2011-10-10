@@ -40,79 +40,64 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
+import "forecasts/elements"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Item {
+    id: root
+    anchors.fill: parent
 
-    property string folder: "images/s60/"
+    signal present();
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
+    property bool isDay : true;
+    property bool isClear : true;
+    property string cityName;
+    property int lowTemperature;
+    property int highTemperature;
+    property int currentTemperature;
 
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
+    function scaledX(x) {
+        return x * window.scaleFactorX;
     }
 
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
+    function scaledY(y) {
+        return y * window.scaleFactorY + yOffset;
     }
 
     Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
+        id: bg
+        x: root.width / 2 - bg.width / 2
+        source: root.isDay ? (root.isClear ? folder + "bg_day_clear.png" : folder + "bg_day_rain.png")
+                       : (root.isClear ? folder + "bg_night_clear.png" : folder + "bg_night_rain.png");
+    }
+
+    ForecastLabel {
+        id: display1
+        z: 99
+        width: scaledX(320)
+        height: 180
+        anchors.left: parent.left
+        anchors.leftMargin: (128 * window.scaleFactorX) - xOffset
+        anchors.bottomMargin: 106
         anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
+        currentTemperature: root.currentTemperature
+        lowTemperature: root.lowTemperature
+        highTemperature: root.highTemperature
     }
 
     Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
+        id: cityLabel
+        z: 99
+        text: root.cityName
         font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
-        }
+        font.pixelSize: scaledX(50)
+        color: "#ffffff"
+        horizontalAlignment: "AlignHCenter"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.leftMargin: scaledX(50)
+        anchors.bottomMargin: textOffset
+        anchors.bottom: parent.bottom
     }
+
+    Connections { target: parent; onPresent: present(); }
 }

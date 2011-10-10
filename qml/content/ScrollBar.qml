@@ -40,79 +40,29 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Item {
+    id: scrollBar
 
-    property string folder: "images/s60/"
+    property real position
+    property real pageSize
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
-
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
-    }
-
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
-    }
-
-    Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
+    Rectangle {
+        id: background
         anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
+        opacity: 0.3
         color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
+        radius: (width / 2 - 1)
+    }
 
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
-        }
+    Rectangle {
+        opacity: 0.7
+        color: "black"
+        radius: (width / 2 - 1)
+        x: 1
+        y: Math.min(Math.max(0.0, scrollBar.position),
+                    Math.max(0.0, 1.0 - scrollBar.pageSize)) * (scrollBar.height - 2) + 1
+        width: parent.width - 2
+        height: Math.min(1.0, scrollBar.pageSize) * (scrollBar.height - 2)
     }
 }

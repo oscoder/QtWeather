@@ -40,79 +40,31 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Item {
+    id: root
 
-    property string folder: "images/s60/"
+    property real itemX
+    property real itemY
+    property real finalY
+    property string lineImage
+    property string itemImage
+    property string folder: "../../" + window.folder
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
+    width: item.width
+    height: itemY + item.height
 
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
-    }
-
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
+    Image {
+        id: line
+        source: root.lineImage
+        anchors.horizontalCenter: root.horizontalCenter
     }
 
     Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
+        id: item
+        x: root.itemX
+        y: root.itemY
+        source: root.itemImage
         anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
-        }
     }
 }

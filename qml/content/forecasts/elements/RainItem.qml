@@ -40,79 +40,35 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+Image {
+    id: rainItem
+    property int frame : 1;
+    property int frameControl : 1;
 
-    property string folder: "images/s60/"
+    property string rainType: "rain";
 
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
+    source: "../../" + folder + rainType + "_0" + rainItem.frame + ".png"
 
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
-    }
-
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
-    }
-
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
-    }
-
-    Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
+    SequentialAnimation {
+        id: rainAnim
+        loops: Animation.Infinite
+        PauseAnimation {
+            duration: 200
         }
+
+        ScriptAction {
+            script: {
+                rainItem.frameControl++
+                if(rainItem.frameControl > 3)
+                  rainItem.frameControl = 1
+
+                rainItem.frame = rainItem.frameControl
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        //rainAnim.running = true
     }
 }

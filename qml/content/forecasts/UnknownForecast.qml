@@ -40,79 +40,34 @@
 ****************************************************************************/
 
 import Qt 4.7
-import "../content"
+import "elements"
+import "../"
 
-Rectangle {
-    id: window
-    width: 360
-    height: 640
-    color: "black"
+ForecastView {
+    id: root
+    isClear: true
 
-    property string folder: "images/s60/"
-
-    property int currentIndex : -1;
-    property bool splashVisible : true
-    property string weatherSource : ""
-
-    property int verticalOffset: -40
-    property real scaleFactorX: window.width / 480.0
-    property real scaleFactorY: window.height / 800.0
-    property int yOffset: 0
-    property int xOffset: 35
-    property int textOffset: bottomBar.height + 20
-
-    CityModel {
-        id: cityModel
+    HungItem {
+        id: question
+        x: scaledX(260)
+        y: scaledY(-800)
+        itemX: 8
+        itemY: 190
+        height: 476
+        finalY: scaledY(-255)
+        itemImage: folder + "na_icon.png"
+        lineImage: folder + "na_icon_line.png"
     }
 
-    WeatherView {
-        id: view
-        x: -65 * scaleFactorX
-        width: 432
-        height: window.height
+    states : State {
+        name: "final"
+        PropertyChanges { target: question; y: question.finalY; }
     }
 
-    CityPanel {
-        id: cityPanel
-        anchors.top: parent.top
-        anchors.bottom: bottomBar.top
+    transitions: Transition {
+        NumberAnimation { target: question; properties: "y";
+                          easing.type: "OutBack"; duration: 500 }
     }
 
-    Image {
-        id: bottomBar
-        source: "content/" + folder + "bg_bottom_options.png"
-        anchors.bottom: parent.bottom
-    }
-
-    SplashScreen {
-        id: splash
-        anchors.fill: parent
-        visible: true
-    }
-
-    Timer {
-        interval: 1000
-        repeat: false
-        running: true
-        onTriggered: splash.visible = false;
-    }
-
-    Text {
-        id: exitLabel
-        text: "Exit"
-        color: "white"
-        font.family: "Nokia Sans"
-        font.pixelSize: 22
-
-        anchors.fill: bottomBar
-        anchors.rightMargin: 15
-        anchors.leftMargin: window.width / 2
-        verticalAlignment: "AlignVCenter"
-        horizontalAlignment: "AlignRight"
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: { Qt.quit(); }
-        }
-    }
+    onPresent: { root.state = "final"; }
 }
