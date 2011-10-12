@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/images/clear.png</file>
+        <file>resources/images/lineedit-bg.png</file>
+        <file>resources/images/shadow.png</file>
+        <file>resources/qml/main.qml</file>
+        <file>resources/qml/WeatherCurrentComp.qml</file>
+        <file>resources/qml/WeatherCurrentModel.qml</file>
+        <file>resources/qml/WeatherDailyForecastComp.qml</file>
+        <file>resources/qml/WeatherDailyForecastModel.qml</file>
+        <file>resources/qml/WeatherInfoComp.qml</file>
+        <file>resources/qml/WeatherInfoModel.qml</file>
+        <file>resources/qml/ShadowRectangle.qml</file>
+        <file>resources/qml/TextBox.qml</file>
+        <file>resources/qml/TextButton.qml</file>
+    </qresource>
+</RCC>
